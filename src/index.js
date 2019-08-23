@@ -52,6 +52,12 @@ function NELSONRULE01_DESC (arr) {
   }).length
 
   return {
+    meta: {
+      mean,
+      stdDev3,
+      upper,
+      lower
+    },
     triggers,
     positions
   }

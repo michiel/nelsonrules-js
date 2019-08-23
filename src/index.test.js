@@ -1,4 +1,4 @@
-const { stdDevFn, NELSONRULE01, NELSONRULE02 } = require('./index')
+const { stdDevFn, NELSONRULE01, NELSONRULE01_DESC, NELSONRULE02 } = require('./index')
 
 describe('Standard Deviation Fn', () => {
   test('It calculates the standard deviation', () => {
@@ -21,10 +21,22 @@ describe('Nelson Rule 01', () => {
     expect(NELSONRULE01(input)).toEqual(expectedOutput)
   })
 
+  test('It can correctly detect one outlier and report it at the correct position', () => {
+    const input = [10, 12, 23, 23, 16, 23, 21, 16, 100]
+    const expectedOutput = [8]
+    expect(NELSONRULE01_DESC(input).positions).toEqual(expectedOutput)
+  })
+
   test('It can correctly detect two outliers', () => {
-    const input = [1, 1, 1, 1, 100, 1, 1, 1, 1000]
-    const expectedOutput = 1
+    const input = [1, 1, 1, 1, -25, -25, -25, -25, -25, 300, 1, 1, 1, 1000]
+    const expectedOutput = 2
     expect(NELSONRULE01(input)).toEqual(expectedOutput)
+  })
+
+  test('It can correctly detect two outliers and report them at the correct positions', () => {
+    const input = [1, 1, 1, 1, -25, -25, -25, -25, -25, 300, 1, 1, 1, 1000]
+    const expectedOutput = [9, 13]
+    expect(NELSONRULE01_DESC(input).positions).toEqual(expectedOutput)
   })
 
   test('It correctly reports zero outliers', () => {

@@ -1,4 +1,10 @@
-const { stdDevFn, NELSONRULE01, NELSONRULE01_DESC, NELSONRULE02 } = require('./index')
+const {
+  stdDevFn,
+  NELSONRULE01,
+  NELSONRULE01_DESC,
+  NELSONRULE02,
+  NELSONRULE02_DESC
+} = require('./index')
 
 describe('Standard Deviation Fn', () => {
   test('It calculates the standard deviation', () => {
@@ -57,9 +63,19 @@ describe('Nelson Rule 02', () => {
     const expectedOutput = 1
     expect(NELSONRULE02(input)).toEqual(expectedOutput)
   })
+  test('It can detect one exact bias sequence at the correct positions', () => {
+    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1]
+    const expectedOutput = [4, 5, 6, 7, 8, 9, 10, 11, 12]
+    expect(NELSONRULE02_DESC(input).positions).toEqual(expectedOutput)
+  })
   test('It can detect two exact bias sequences', () => {
     const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     const expectedOutput = 2
     expect(NELSONRULE02(input)).toEqual(expectedOutput)
+  })
+  test('It can detect two exact bias sequences at the correct positions', () => {
+    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    const expectedOutput = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    expect(NELSONRULE02_DESC(input).positions).toEqual(expectedOutput)
   })
 })

@@ -77,15 +77,25 @@ function NELSONRULE01 (arr) {
 function NELSONRULE02_DESC (arr) {
   const values = filterOutliers(arr)
   const mean = meanFn(values)
+  const BIAS = 9
 
   let over = null
   let counter = 1
   let triggers = 0
   let positions = []
 
+  function counterUp () {
+    counter++
+    if (counter === 9) {
+      triggers++
+    }
+  }
+
   function flip (idx) {
-    for (var i = (idx - counter); i < idx; i++) {
-      positions.push(i)
+    if (counter > BIAS - 1) {
+      for (var i = (idx - counter); i < idx; i++) {
+        positions.push(i)
+      }
     }
     counter = 1
     over = !over
@@ -97,23 +107,25 @@ function NELSONRULE02_DESC (arr) {
       flip(idx)
     } else if (over) {
       if (val > mean) {
-        counter++
+        counterUp()
       } else {
         flip(idx)
       }
     } else {
       if (val < mean) {
-        counter++
+        counterUp()
       } else {
         flip(idx)
       }
     }
-    if (counter === 9) {
-      triggers++
-    }
   })
 
+  flip(arr.length)
+
   return {
+    meta: {
+      mean
+    },
     positions,
     triggers
   }

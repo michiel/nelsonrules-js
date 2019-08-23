@@ -34,6 +34,28 @@ function stdDevFn (arr) {
   )
 }
 
+function NELSONRULE01_DESC (arr) {
+  const values = filterOutliers(arr)
+  const mean = meanFn(values)
+  const stdDev3 = stdDevFn(values) * 3
+  const upper = mean + stdDev3
+  const lower = mean - stdDev3
+
+  let positions = []
+
+  const triggers = arr.filter(function (val, idx) {
+    const outOfBounds = (val > upper) || (val < lower)
+    if (outOfBounds) {
+      positions.push(idx)
+    }
+    return outOfBounds
+  }).length
+
+  return {
+    triggers,
+    positions
+  }
+}
 /**
  * Nelson Rule 01
  * One point is more than 3 standard deviations from the mean. At least one sample is grossly out of control.
@@ -43,15 +65,52 @@ function stdDevFn (arr) {
  * @customfunction
  */
 function NELSONRULE01 (arr) {
+  return NELSONRULE01_DESC(arr).triggers
+}
+
+function NELSONRULE02_DESC (arr) {
   const values = filterOutliers(arr)
   const mean = meanFn(values)
-  const stdDev3 = stdDevFn(values) * 3
-  const upper = mean + stdDev3
-  const lower = mean - stdDev3
 
-  return arr.filter(function (val) {
-    return (val > upper) || (val < lower)
-  }).length
+  let over = null
+  let counter = 1
+  let triggers = 0
+  let positions = []
+
+  function flip (idx) {
+    for (var i = (idx - counter); i < idx; i++) {
+      positions.push(i)
+    }
+    counter = 1
+    over = !over
+  }
+
+  arr.forEach((val, idx) => {
+    if (over === null) {
+      over = (val < mean)
+      flip(idx)
+    } else if (over) {
+      if (val > mean) {
+        counter++
+      } else {
+        flip(idx)
+      }
+    } else {
+      if (val < mean) {
+        counter++
+      } else {
+        flip(idx)
+      }
+    }
+    if (counter === 9) {
+      triggers++
+    }
+  })
+
+  return {
+    positions,
+    triggers
+  }
 }
 
 /**
@@ -63,44 +122,13 @@ function NELSONRULE01 (arr) {
  * @customfunction
  */
 function NELSONRULE02 (arr) {
-  const values = filterOutliers(arr)
-  const mean = meanFn(values)
-
-  let over = null
-  let counter = 1
-  let triggers = 0
-
-  function flip () {
-    counter = 1
-    over = !over
-  }
-
-  arr.forEach(val => {
-    if (over === null) {
-      over = (val < mean)
-      flip()
-    } else if (over) {
-      if (val > mean) {
-        counter++
-      } else {
-        flip()
-      }
-    } else {
-      if (val < mean) {
-        counter++
-      } else {
-        flip()
-      }
-    }
-    if (counter === 6) {
-      triggers++
-    }
-  })
-  return triggers
+  return NELSONRULE02_DESC(arr).triggers
 }
 
 module.exports = {
   stdDevFn,
   NELSONRULE01,
-  NELSONRULE02
+  NELSONRULE01_DESC,
+  NELSONRULE02,
+  NELSONRULE02_DESC
 }

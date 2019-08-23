@@ -41,12 +41,12 @@ describe('Nelson Rule 02', () => {
     expect(NELSONRULE02(input)).toEqual(expectedOutput)
   })
   test('It can detect one exact bias sequence', () => {
-    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1]
+    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1]
     const expectedOutput = 1
     expect(NELSONRULE02(input)).toEqual(expectedOutput)
   })
   test('It can detect two exact bias sequences', () => {
-    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1]
+    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     const expectedOutput = 2
     expect(NELSONRULE02(input)).toEqual(expectedOutput)
   })

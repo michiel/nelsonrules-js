@@ -1,66 +1,59 @@
-function filterOutliers (arr) {
-  let values = arr.concat()
-  values.sort(function (a, b) {
-    return a - b
-  })
+function filterOutliers(arr) {
+  const values = arr.concat();
+  values.sort((a, b) => a - b);
 
-  const q1 = values[Math.floor((values.length / 4))]
-  const q3 = values[Math.ceil((values.length * (3 / 4)))]
-  const iqr = q3 - q1
+  const q1 = values[Math.floor((values.length / 4))];
+  const q3 = values[Math.ceil((values.length * (3 / 4)))];
+  const iqr = q3 - q1;
 
-  const maxValue = q3 + iqr * 1.5
-  const minValue = q1 - iqr * 1.5
+  const maxValue = q3 + iqr * 1.5;
+  const minValue = q1 - iqr * 1.5;
 
-  return values.filter((x) => {
-    return (x <= maxValue) && (x >= minValue)
-  })
+  return values.filter((x) => (x <= maxValue) && (x >= minValue));
 }
 
-function meanFn (arr) {
+function meanFn(arr) {
   return arr.reduce(
-    function (a, b) {
-      return a + b
-    }, 0) / arr.length
+    (a, b) => a + b, 0,
+  ) / arr.length;
 }
 
-function stdDevFn (arr) {
-  const mean = meanFn(arr)
+function stdDevFn(arr) {
+  const mean = meanFn(arr);
   return Math.sqrt(
     meanFn(
-      arr.map(function (value) {
-        return (value - mean) ** 2
-      })
-    )
-  )
+      arr.map((value) => (value - mean) ** 2),
+    ),
+  );
 }
 
-function NELSONRULE01_DESC (arr) {
-  const values = filterOutliers(arr)
-  const mean = meanFn(values)
-  const stdDev3 = stdDevFn(values) * 3
-  const upper = mean + stdDev3
-  const lower = mean - stdDev3
+function NELSONRULE01_DESC(arr) {
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const stdDev3 = stdDevFn(values) * 3;
+  const upper = mean + stdDev3;
+  const lower = mean - stdDev3;
 
-  let positions = []
+  const positions = [];
 
-  const triggers = arr.filter(function (val, idx) {
-    const outOfBounds = (val > upper) || (val < lower)
+  const triggers = arr.filter((val, idx) => {
+    const outOfBounds = (val > upper) || (val < lower);
     if (outOfBounds) {
-      positions.push(idx)
+      positions.push(idx);
     }
-    return outOfBounds
-  }).length
+    return outOfBounds;
+  }).length;
 
   return {
     meta: {
       mean,
       stdDev3,
       upper,
-      lower
+      lower,
     },
     triggers,
-    positions
-  }
+    positions,
+  };
 }
 /**
  * Nelson Rule 01
@@ -70,65 +63,63 @@ function NELSONRULE01_DESC (arr) {
  * @return Number of triggers
  * @customfunction
  */
-function NELSONRULE01 (arr) {
-  return NELSONRULE01_DESC(arr).triggers
+function NELSONRULE01(arr) {
+  return NELSONRULE01_DESC(arr).triggers;
 }
 
-function NELSONRULE02_DESC (arr) {
-  const values = filterOutliers(arr)
-  const mean = meanFn(values)
-  const BIAS = 9
+function NELSONRULE02_DESC(arr) {
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const BIAS = 9;
 
-  let over = null
-  let counter = 1
-  let triggers = 0
-  let positions = []
+  let over = null;
+  let counter = 1;
+  let triggers = 0;
+  const positions = [];
 
-  function counterUp () {
-    counter++
+  function counterUp() {
+    counter++;
     if (counter === 9) {
-      triggers++
+      triggers++;
     }
   }
 
-  function flip (idx) {
+  function flip(idx) {
     if (counter > BIAS - 1) {
-      for (var i = (idx - counter); i < idx; i++) {
-        positions.push(i)
+      for (let i = (idx - counter); i < idx; i++) {
+        positions.push(i);
       }
     }
-    counter = 1
-    over = !over
+    counter = 1;
+    over = !over;
   }
 
   arr.forEach((val, idx) => {
     if (over === null) {
-      over = (val < mean)
-      flip(idx)
+      over = (val < mean);
+      flip(idx);
     } else if (over) {
       if (val > mean) {
-        counterUp()
+        counterUp();
       } else {
-        flip(idx)
+        flip(idx);
       }
+    } else if (val < mean) {
+      counterUp();
     } else {
-      if (val < mean) {
-        counterUp()
-      } else {
-        flip(idx)
-      }
+      flip(idx);
     }
-  })
+  });
 
-  flip(arr.length)
+  flip(arr.length);
 
   return {
     meta: {
-      mean
+      mean,
     },
     positions,
-    triggers
-  }
+    triggers,
+  };
 }
 
 /**
@@ -139,8 +130,8 @@ function NELSONRULE02_DESC (arr) {
  * @return Number of triggers
  * @customfunction
  */
-function NELSONRULE02 (arr) {
-  return NELSONRULE02_DESC(arr).triggers
+function NELSONRULE02(arr) {
+  return NELSONRULE02_DESC(arr).triggers;
 }
 
 module.exports = {
@@ -148,5 +139,5 @@ module.exports = {
   NELSONRULE01,
   NELSONRULE01_DESC,
   NELSONRULE02,
-  NELSONRULE02_DESC
-}
+  NELSONRULE02_DESC,
+};

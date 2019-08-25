@@ -57,7 +57,8 @@ function NELSONRULE01_DESC(arr) {
 }
 /**
  * Nelson Rule 01
- * One point is more than 3 standard deviations from the mean. At least one sample is grossly out of control.
+ * One point is more than 3 standard deviations from the mean.
+ * At least one sample is grossly out of control.
  *
  * @param {Array} arr Array of Numbers
  * @return Number of triggers
@@ -78,15 +79,15 @@ function NELSONRULE02_DESC(arr) {
   const positions = [];
 
   function counterUp() {
-    counter++;
+    counter += 1;
     if (counter === 9) {
-      triggers++;
+      triggers += 1;
     }
   }
 
   function flip(idx) {
     if (counter > BIAS - 1) {
-      for (let i = (idx - counter); i < idx; i++) {
+      for (let i = (idx - counter); i < idx; i += 1) {
         positions.push(i);
       }
     }
@@ -124,7 +125,8 @@ function NELSONRULE02_DESC(arr) {
 
 /**
  * Nelson Rule 02
- * Nine (or more) points in a row are on the same side of the mean.  Some prolonged bias exists
+ * Nine (or more) points in a row are on the same side of the mean.
+ * Some prolonged bias exists
  *
  * @param {Array} arr Array of Numbers
  * @return Number of triggers

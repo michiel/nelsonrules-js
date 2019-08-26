@@ -4,6 +4,8 @@ const {
   NELSONRULE01_DESC,
   NELSONRULE02,
   NELSONRULE02_DESC,
+  NELSONRULE03,
+  NELSONRULE03_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -77,5 +79,42 @@ describe('Nelson Rule 02', () => {
     const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     const expectedOutput = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
     expect(NELSONRULE02_DESC(input).positions).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 03', () => {
+  test('It can detect one trend', () => {
+    const input = [1, 2, 3, 4, 5, 6];
+    const expectedOutput = 1;
+    expect(NELSONRULE03(input)).toEqual(expectedOutput);
+  });
+  test('It can detect two disconnected trends', () => {
+    const input = [1, 2, 3, 4, 5, 6, 0, 6, 5, 4, 3, 2, 1];
+    const expectedOutput = 2;
+    expect(NELSONRULE03(input)).toEqual(expectedOutput);
+  });
+  test('It can detect two connected trends', () => {
+    const input = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1];
+    const expectedOutput = 2;
+    expect(NELSONRULE03(input)).toEqual(expectedOutput);
+  });
+  test('It can detect three connected trends', () => {
+    const input = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6];
+    const expectedOutput = 3;
+    expect(NELSONRULE03(input)).toEqual(expectedOutput);
+  });
+  test('It can detect three connected trends in the correct position groupings', () => {
+    const input = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6];
+    const expectedOutput = [
+      [0, 1, 2, 3, 4, 5],
+      [5, 6, 7, 8, 9, 10],
+      [10, 11, 12, 13, 14, 15],
+    ];
+    expect(NELSONRULE03_DESC(input).groups).toEqual(expectedOutput);
+  });
+  test('It can detect three connected trends at the correct positions', () => {
+    const input = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6];
+    const expectedOutput = [0, 1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13, 14, 15];
+    expect(NELSONRULE03_DESC(input).positions).toEqual(expectedOutput);
   });
 });

@@ -85,7 +85,7 @@ function NELSONRULE02_DESC(arr) {
     }
   }
 
-  function flip(idx) {
+  function endSequence(idx) {
     if (counter > BIAS - 1) {
       for (let i = (idx - counter); i < idx; i += 1) {
         positions.push(i);
@@ -98,21 +98,21 @@ function NELSONRULE02_DESC(arr) {
   arr.forEach((val, idx) => {
     if (over === null) {
       over = (val < mean);
-      flip(idx);
+      endSequence(idx);
     } else if (over) {
       if (val > mean) {
         counterUp();
       } else {
-        flip(idx);
+        endSequence(idx);
       }
     } else if (val < mean) {
       counterUp();
     } else {
-      flip(idx);
+      endSequence(idx);
     }
   });
 
-  flip(arr.length);
+  endSequence(arr.length);
 
   return {
     meta: {
@@ -136,10 +136,91 @@ function NELSONRULE02(arr) {
   return NELSONRULE02_DESC(arr).triggers;
 }
 
+function NELSONRULE03_DESC(arr) {
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const TREND = 6;
+
+  const groups = [];
+  let positions = [];
+
+  let triggers = 0;
+  let trendUp = null;
+  let counter = 1;
+
+  function counterUp() {
+    counter += 1;
+    if (counter === TREND) {
+      triggers += 1;
+    }
+  }
+
+  function endSequence(idx) {
+    const group = [];
+    if (counter >= TREND) {
+      for (let i = ((idx + 1) - counter); i < idx; i += 1) {
+        group.push(i);
+      }
+    }
+    groups.push(group);
+    positions = positions.concat(group);
+    counter = 2;
+    trendUp = !trendUp;
+  }
+
+  function isUp(a, b) {
+    return a > b;
+  }
+
+  arr.forEach((val, idx) => {
+    const prevVal = arr[idx - 1];
+    const goingUp = isUp(val, prevVal);
+
+    if (trendUp === null) {
+      if (idx !== 0) {
+        trendUp = goingUp;
+      }
+      // counterUp();
+    } else if (trendUp && goingUp) {
+      // counterUp();
+    } else if (!trendUp && !goingUp) {
+      // counterUp();
+    } else {
+      endSequence(idx);
+      // counterUp();
+    }
+    counterUp();
+  });
+
+  endSequence(arr.length);
+
+  return {
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+
+/**
+ * Nelson Rule 03
+ * Six (or more) points in a row are continually increasing (or decreasing).
+ * A trend exists.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
+function NELSONRULE03(arr) {
+  return NELSONRULE03_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
   NELSONRULE01_DESC,
   NELSONRULE02,
   NELSONRULE02_DESC,
+  NELSONRULE03,
+  NELSONRULE03_DESC,
 };

@@ -77,14 +77,14 @@ describe('Nelson Rule 02', () => {
     const expectedOutput = 2;
     expect(NELSONRULE02(input)).toEqual(expectedOutput);
   });
-  //  test('It can detect two exact bias sequences in the correct position groupings', () => {
-  //    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-  //    const expectedOutput = [
-  //      [4, 5, 6, 7, 8, 9, 10, 11, 12],
-  //      [13, 14, 15, 16, 17, 18, 19, 20, 21],
-  //    ];
-  //    expect(NELSONRULE02_DESC(input).groups).toEqual(expectedOutput);
-  //  });
+  test('It can detect two exact bias sequences in the correct position groupings', () => {
+    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    const expectedOutput = [
+      [4, 5, 6, 7, 8, 9, 10, 11, 12],
+      [13, 14, 15, 16, 17, 18, 19, 20, 21],
+    ];
+    expect(NELSONRULE02_DESC(input).groups).toEqual(expectedOutput);
+  });
   test('It can detect two exact bias sequences at the correct positions', () => {
     const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     const expectedOutput = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];

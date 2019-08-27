@@ -87,14 +87,14 @@ function NELSONRULE02_DESC(arr) {
   }
 
   function endSequence(idx) {
-    const group = [];
     if (counter > BIAS - 1) {
+      const group = [];
       for (let i = ((idx + 1) - counter); i < idx; i += 1) {
         group.push(i);
       }
+      groups.push(group);
+      positions = positions.concat(group);
     }
-    groups.push(group);
-    positions = positions.concat(group);
     counter = 2;
     over = !over;
   }

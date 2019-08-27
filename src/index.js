@@ -76,29 +76,33 @@ function NELSONRULE02_DESC(arr) {
   let over = null;
   let counter = 1;
   let triggers = 0;
-  const positions = [];
+  let positions = [];
+  const groups = [];
 
   function counterUp() {
     counter += 1;
-    if (counter === 9) {
+    if (counter === BIAS) {
       triggers += 1;
     }
   }
 
   function endSequence(idx) {
+    const group = [];
     if (counter > BIAS - 1) {
-      for (let i = (idx - counter); i < idx; i += 1) {
-        positions.push(i);
+      for (let i = ((idx + 1) - counter); i < idx; i += 1) {
+        group.push(i);
       }
     }
-    counter = 1;
+    groups.push(group);
+    positions = positions.concat(group);
+    counter = 2;
     over = !over;
   }
 
   arr.forEach((val, idx) => {
     if (over === null) {
       over = (val < mean);
-      endSequence(idx);
+      counterUp();
     } else if (over) {
       if (val > mean) {
         counterUp();
@@ -118,6 +122,7 @@ function NELSONRULE02_DESC(arr) {
     meta: {
       mean,
     },
+    groups,
     positions,
     triggers,
   };
@@ -137,8 +142,6 @@ function NELSONRULE02(arr) {
 }
 
 function NELSONRULE03_DESC(arr) {
-  const values = filterOutliers(arr);
-  const mean = meanFn(values);
   const TREND = 6;
 
   const groups = [];
@@ -215,6 +218,66 @@ function NELSONRULE03(arr) {
   return NELSONRULE03_DESC(arr).triggers;
 }
 
+function NELSONRULE04_DESC(arr) {
+  const SEQUENCE_LENGTH = 15;
+  const groups = [];
+  let positions = [];
+  let triggers = 0;
+  let counter = 0;
+
+  function isUp(a, b) {
+    return a > b;
+  }
+
+  function counterUp() {
+    if (counter === 0) {
+      counter = 3;
+    } else {
+      counter += 1;
+    }
+  }
+
+  function registerSequence(idx) {
+    if (counter >= SEQUENCE_LENGTH) {
+      const group = [];
+      for (let i = ((idx + 1) - counter); i < idx; i += 1) {
+        group.push(i);
+      }
+      groups.push(group);
+      positions = positions.concat(group);
+    }
+  }
+
+  function cycle(val, idx, list) {
+    const val1 = list[idx - 1];
+    const val2 = list[idx - 2];
+
+    if (isUp(val, val1) === !isUp(val1, val2)) {
+      counterUp();
+    } else {
+      registerSequence(idx);
+      counter = 0;
+    }
+
+    if (counter === SEQUENCE_LENGTH) {
+      triggers += 1;
+    }
+  }
+
+  arr.forEach(cycle);
+  registerSequence(arr.length);
+
+  return {
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+function NELSONRULE04(arr) {
+  return NELSONRULE04_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
@@ -223,4 +286,6 @@ module.exports = {
   NELSONRULE02_DESC,
   NELSONRULE03,
   NELSONRULE03_DESC,
+  NELSONRULE04,
+  NELSONRULE04_DESC,
 };

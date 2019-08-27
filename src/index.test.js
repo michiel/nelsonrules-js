@@ -6,6 +6,8 @@ const {
   NELSONRULE02_DESC,
   NELSONRULE03,
   NELSONRULE03_DESC,
+  NELSONRULE04,
+  NELSONRULE04_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -75,6 +77,14 @@ describe('Nelson Rule 02', () => {
     const expectedOutput = 2;
     expect(NELSONRULE02(input)).toEqual(expectedOutput);
   });
+  //  test('It can detect two exact bias sequences in the correct position groupings', () => {
+  //    const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+  //    const expectedOutput = [
+  //      [4, 5, 6, 7, 8, 9, 10, 11, 12],
+  //      [13, 14, 15, 16, 17, 18, 19, 20, 21],
+  //    ];
+  //    expect(NELSONRULE02_DESC(input).groups).toEqual(expectedOutput);
+  //  });
   test('It can detect two exact bias sequences at the correct positions', () => {
     const input = [1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     const expectedOutput = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
@@ -116,5 +126,33 @@ describe('Nelson Rule 03', () => {
     const input = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6];
     const expectedOutput = [0, 1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13, 14, 15];
     expect(NELSONRULE03_DESC(input).positions).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 04', () => {
+  test('It can detect one oscillating sequence', () => {
+    const input = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2];
+    const expectedOutput = 1;
+    expect(NELSONRULE04(input)).toEqual(expectedOutput);
+  });
+  test('It can detect one oscillating sequence exactly', () => {
+    const input = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 0, -1, -2, -3, -2, -1, 0, 1, 1];
+    const expectedOutput = 1;
+    expect(NELSONRULE04(input)).toEqual(expectedOutput);
+  });
+  test('It can detect one oscillating sequence exactly at the correct position', () => {
+    const input = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 0, -1, -2, -3, -2, -1, 0, 1, 1];
+    const expectedOutput = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    expect(NELSONRULE04_DESC(input).positions).toEqual(expectedOutput);
+  });
+  test('It can detect two oscillating sequences exactly', () => {
+    const sequence = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2];
+    const input = [].concat(sequence).concat([0, 0]).concat(sequence).concat(sequence);
+    const expectedOutput = [
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+        34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+    ];
+    expect(NELSONRULE04_DESC(input).groups).toEqual(expectedOutput);
   });
 });

@@ -175,6 +175,10 @@ function NELSONRULE03_DESC(arr) {
     return a > b;
   }
 
+  function isTrending(a, b) {
+    return a === b;
+  }
+
   arr.forEach((val, idx) => {
     const prevVal = arr[idx - 1];
     const goingUp = isUp(val, prevVal);
@@ -183,14 +187,8 @@ function NELSONRULE03_DESC(arr) {
       if (idx !== 0) {
         trendUp = goingUp;
       }
-      // counterUp();
-    } else if (trendUp && goingUp) {
-      // counterUp();
-    } else if (!trendUp && !goingUp) {
-      // counterUp();
-    } else {
+    } else if (!isTrending(trendUp, goingUp)) {
       endSequence(idx);
-      // counterUp();
     }
     counterUp();
   });

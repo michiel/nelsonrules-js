@@ -8,6 +8,8 @@ const {
   NELSONRULE03_DESC,
   NELSONRULE04,
   NELSONRULE04_DESC,
+  NELSONRULE05,
+  NELSONRULE05_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -154,5 +156,13 @@ describe('Nelson Rule 04', () => {
         34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
     ];
     expect(NELSONRULE04_DESC(input).groups).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 05', () => {
+  test('It can detect one slightly out of control sequence', () => {
+    const input = [10, 10, 10, 10, 20, 20, 10, 10, 10, 10, 10, 10, 10, 10];
+    const expectedOutput = 1;
+    expect(NELSONRULE05(input)).toEqual(expectedOutput);
   });
 });

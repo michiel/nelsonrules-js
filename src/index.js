@@ -276,6 +276,82 @@ function NELSONRULE04(arr) {
   return NELSONRULE04_DESC(arr).triggers;
 }
 
+function NELSONRULE05_DESC(arr) {
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const stdDev2 = stdDevFn(values) * 2;
+  const upper = mean + stdDev2;
+  const lower = mean - stdDev2;
+
+  const groups = [];
+  let positions = [];
+  let triggers = 0;
+
+  function isAbove(val) {
+    return val > upper;
+  }
+
+  function isBelow(val) {
+    return val > upper;
+  }
+
+  function match(a, b, c, idx) {
+    const matches = [];
+    if (isAbove(b)) {
+      matches.push(idx - 1);
+      if (isAbove(c)) {
+        matches.push(idx);
+        if (isAbove(a)) {
+          matches.unshift(idx - 2);
+        }
+      }
+    } else if (isBelow(b)) {
+      matches.push(idx - 1);
+      if (isBelow(c)) {
+        matches.push(idx);
+        if (isBelow(a)) {
+          matches.unshift(idx - 2);
+        }
+      }
+    }
+    if (matches.length > 1) {
+      return matches;
+    }
+    return [];
+  }
+
+  function cycle(val, idx, list) {
+    if (idx > 1) {
+      const val1 = list[idx - 1];
+      const val2 = list[idx - 2];
+      const matches = match(val2, val1, val, idx);
+      if (matches.length > 1) {
+        triggers += 1;
+        groups.push(matches);
+        positions = positions.concat(matches);
+      }
+    }
+  }
+
+  arr.forEach(cycle);
+
+  return {
+    meta: {
+      mean,
+      stdDev2,
+      upper,
+      lower,
+    },
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+function NELSONRULE05(arr) {
+  return NELSONRULE05_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
@@ -286,4 +362,6 @@ module.exports = {
   NELSONRULE03_DESC,
   NELSONRULE04,
   NELSONRULE04_DESC,
+  NELSONRULE05,
+  NELSONRULE05_DESC,
 };

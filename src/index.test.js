@@ -10,6 +10,8 @@ const {
   NELSONRULE04_DESC,
   NELSONRULE05,
   NELSONRULE05_DESC,
+  NELSONRULE06,
+  NELSONRULE06_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -164,5 +166,44 @@ describe('Nelson Rule 05', () => {
     const input = [10, 10, 10, 10, 20, 20, 10, 10, 10, 10, 10, 10, 10, 10];
     const expectedOutput = 1;
     expect(NELSONRULE05(input)).toEqual(expectedOutput);
+  });
+  test('It can detect two slightly out of control sequences', () => {
+    const input = [10, 10, 10, 10, 20, 20, 10, 10, 0, 0, 10, 10, 10, 10];
+    const expectedOutput = 2;
+    expect(NELSONRULE05(input)).toEqual(expectedOutput);
+  });
+  test('It can detect five two or three-part out of control sequences', () => {
+    const input = [10, 10, 10, 10, 10, 10, 25, 155, 25, 0, 0, 0, 0, 10, 10, 10, 10];
+    const expectedOutput = 5;
+    expect(NELSONRULE05(input)).toEqual(expectedOutput);
+  });
+  test('It can detect five two or three-part out of control sequences at the correct positions', () => {
+    const input = [10, 10, 10, 10, 10, 10, 25, 155, 25, 0, 0, 0, 0, 10, 10, 10, 10];
+    const expectedOutput = [6, 7, 6, 7, 8, 9, 10, 9, 10, 11, 10, 11, 12];
+    expect(NELSONRULE05_DESC(input).positions).toEqual(expectedOutput);
+  });
+  test('It can detect five two or three-part out of control sequences in the correct groups', () => {
+    const input = [10, 10, 10, 10, 10, 10, 25, 155, 25, 0, 0, 0, 0, 10, 10, 10, 10];
+    const expectedOutput = [
+      [6, 7],
+      [6, 7, 8],
+      [9, 10],
+      [9, 10, 11],
+      [10, 11, 12],
+    ];
+    expect(NELSONRULE05_DESC(input).groups).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 06', () => {
+  test('It can detect one slightly out of control sequence', () => {
+    const input = [10, 10, 10, 20, 20, 20, 20, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+    const expectedOutput = 1;
+    expect(NELSONRULE06(input)).toEqual(expectedOutput);
+  });
+  test('It can detect one slightly out of control sequence at the correct positions', () => {
+    const input = [10, 10, 10, 20, 20, 20, 20, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+    const expectedOutput = [3, 4, 5, 6];
+    expect(NELSONRULE06_DESC(input).positions).toEqual(expectedOutput);
   });
 });

@@ -272,10 +272,16 @@ function NELSONRULE04_DESC(arr) {
   };
 }
 
+// Fourteen (or more) points in a row alternate in direction, increasing then
+// decreasing.
+// This much oscillation is beyond noise.
 function NELSONRULE04(arr) {
   return NELSONRULE04_DESC(arr).triggers;
 }
 
+// Two (or three) out of three points in a row are more than 2 standard
+// deviations from the mean in the same direction.
+// There is a medium tendency for samples to be mediumly out of control.
 function NELSONRULE05_DESC(arr) {
   const values = filterOutliers(arr);
   const mean = meanFn(values);
@@ -292,7 +298,7 @@ function NELSONRULE05_DESC(arr) {
   }
 
   function isBelow(val) {
-    return val > upper;
+    return val < lower;
   }
 
   function match(a, b, c, idx) {
@@ -352,6 +358,87 @@ function NELSONRULE05(arr) {
   return NELSONRULE05_DESC(arr).triggers;
 }
 
+function NELSONRULE06_DESC(arr) {
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const stdDev = stdDevFn(values);
+  const upper = mean + stdDev;
+  const lower = mean - stdDev;
+
+  const groups = [];
+  let positions = [];
+  let triggers = 0;
+
+  const isAbove = (val) => val > upper;
+  const isBelow = (val) => val < lower;
+
+  function match(a, b, c, d, e, idx) {
+    const matches = [];
+    if (isAbove(b) && isAbove(c) && isAbove(d)) {
+      matches.push(idx - 3);
+      matches.push(idx - 2);
+      matches.push(idx - 1);
+      if (isAbove(e)) {
+        matches.push(idx);
+        if (isAbove(a)) {
+          matches.unshift(idx - 4);
+        }
+      }
+    } else if (isBelow(b) && isBelow(c) && isBelow(d)) {
+      matches.push(idx - 3);
+      matches.push(idx - 2);
+      matches.push(idx - 1);
+      if (isBelow(e)) {
+        matches.push(idx);
+        if (isBelow(a)) {
+          matches.unshift(idx - 4);
+        }
+      }
+    }
+    if (matches.length > 3) {
+      return matches;
+    }
+    return [];
+  }
+
+  function cycle(val, idx, list) {
+    if (idx > 1) {
+      const val1 = list[idx - 1];
+      const val2 = list[idx - 2];
+      const val3 = list[idx - 3];
+      const val4 = list[idx - 4];
+      const matches = match(val4, val3, val2, val1, val, idx);
+
+      if (matches.length > 3) {
+        triggers += 1;
+        groups.push(matches);
+        positions = positions.concat(matches);
+      }
+    }
+  }
+
+  arr.forEach(cycle);
+
+  return {
+    meta: {
+      mean,
+      stdDev,
+      upper,
+      lower,
+    },
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+// Four (or five) out of five points in a row are more than 1 standard
+// deviation from the mean in the same direction.
+// There is a strong tendency for samples to be slightly out of control.
+function NELSONRULE06(arr) {
+  return NELSONRULE06_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
@@ -364,4 +451,6 @@ module.exports = {
   NELSONRULE04_DESC,
   NELSONRULE05,
   NELSONRULE05_DESC,
+  NELSONRULE06,
+  NELSONRULE06_DESC,
 };

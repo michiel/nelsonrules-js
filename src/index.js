@@ -1,3 +1,7 @@
+function sanitizeInput(list) {
+  return list.map((el) => parseFloat(el));
+}
+
 function filterOutliers(arr) {
   const values = arr.concat();
   values.sort((a, b) => a - b);
@@ -27,7 +31,8 @@ function stdDevFn(arr) {
   );
 }
 
-function NELSONRULE01_DESC(arr) {
+function NELSONRULE01_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const values = filterOutliers(arr);
   const mean = meanFn(values);
   const stdDev3 = stdDevFn(values) * 3;
@@ -68,7 +73,8 @@ function NELSONRULE01(arr) {
   return NELSONRULE01_DESC(arr).triggers;
 }
 
-function NELSONRULE02_DESC(arr) {
+function NELSONRULE02_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const values = filterOutliers(arr);
   const mean = meanFn(values);
   const BIAS = 9;
@@ -141,7 +147,8 @@ function NELSONRULE02(arr) {
   return NELSONRULE02_DESC(arr).triggers;
 }
 
-function NELSONRULE03_DESC(arr) {
+function NELSONRULE03_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const TREND = 6;
 
   const groups = [];
@@ -216,7 +223,8 @@ function NELSONRULE03(arr) {
   return NELSONRULE03_DESC(arr).triggers;
 }
 
-function NELSONRULE04_DESC(arr) {
+function NELSONRULE04_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const SEQUENCE_LENGTH = 15;
   const groups = [];
   let positions = [];
@@ -282,7 +290,8 @@ function NELSONRULE04(arr) {
 // Two (or three) out of three points in a row are more than 2 standard
 // deviations from the mean in the same direction.
 // There is a medium tendency for samples to be mediumly out of control.
-function NELSONRULE05_DESC(arr) {
+function NELSONRULE05_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const values = filterOutliers(arr);
   const mean = meanFn(values);
   const stdDev2 = stdDevFn(values) * 2;
@@ -358,7 +367,8 @@ function NELSONRULE05(arr) {
   return NELSONRULE05_DESC(arr).triggers;
 }
 
-function NELSONRULE06_DESC(arr) {
+function NELSONRULE06_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const values = filterOutliers(arr);
   const mean = meanFn(values);
   const stdDev = stdDevFn(values);
@@ -440,7 +450,8 @@ function NELSONRULE06(arr) {
 }
 
 
-function NELSONRULE07_DESC(arr) {
+function NELSONRULE07_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const SEQUENCE_LENGTH = 15;
   const values = filterOutliers(arr);
   const mean = meanFn(values);
@@ -497,7 +508,8 @@ function NELSONRULE07(arr) {
   return NELSONRULE07_DESC(arr).triggers;
 }
 
-function NELSONRULE08_DESC(arr) {
+function NELSONRULE08_DESC(listIn) {
+  const arr = sanitizeInput(listIn);
   const SEQUENCE_LENGTH = 8;
   const values = filterOutliers(arr);
   const mean = meanFn(values);

@@ -235,7 +235,7 @@ function NELSONRULE04_DESC(arr) {
     }
   }
 
-  function registerSequence(idx) {
+  function endSequence(idx) {
     if (counter >= SEQUENCE_LENGTH) {
       const group = [];
       for (let i = ((idx + 1) - counter); i < idx; i += 1) {
@@ -253,7 +253,7 @@ function NELSONRULE04_DESC(arr) {
     if (isUp(val, val1) === !isUp(val1, val2)) {
       counterUp();
     } else {
-      registerSequence(idx);
+      endSequence(idx);
       counter = 0;
     }
 
@@ -263,7 +263,7 @@ function NELSONRULE04_DESC(arr) {
   }
 
   arr.forEach(cycle);
-  registerSequence(arr.length);
+  endSequence(arr.length);
 
   return {
     groups,
@@ -439,6 +439,64 @@ function NELSONRULE06(arr) {
   return NELSONRULE06_DESC(arr).triggers;
 }
 
+
+function NELSONRULE07_DESC(arr) {
+  const SEQUENCE_LENGTH = 15;
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const stdDev = stdDevFn(values);
+  const upper = mean + stdDev;
+  const lower = mean - stdDev;
+
+  const groups = [];
+  let positions = [];
+  let triggers = 0;
+  let counter = 0;
+
+  const isInRange = (val) => (val < upper) && (val > lower);
+
+  function match(list, offset) {
+    if (list.filter(isInRange).length === list.length) {
+      return list.map((el, idx) => (offset - list.length) + (idx));
+    }
+    return [];
+  }
+
+  function cycle(val, idx, list) {
+    counter += 1;
+    if (counter >= SEQUENCE_LENGTH) {
+      const matches = match(list.slice(idx - SEQUENCE_LENGTH, idx), idx);
+      if (matches.length > 0) {
+        triggers += 1;
+        groups.push(matches);
+        positions = positions.concat(matches);
+        counter = 0;
+      }
+    }
+  }
+
+  arr.forEach(cycle);
+
+  return {
+    meta: {
+      mean,
+      stdDev,
+      upper,
+      lower,
+    },
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+// Fifteen points in a row are all within 1 standard deviation of the mean on
+// either side of the mean.
+// With 1 standard deviation, greater variation would be expected.
+function NELSONRULE07(arr) {
+  return NELSONRULE07_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
@@ -452,5 +510,7 @@ module.exports = {
   NELSONRULE05,
   NELSONRULE05_DESC,
   NELSONRULE06,
+  NELSONRULE07_DESC,
+  NELSONRULE07,
   NELSONRULE06_DESC,
 };

@@ -12,6 +12,8 @@ const {
   NELSONRULE05_DESC,
   NELSONRULE06,
   NELSONRULE06_DESC,
+  NELSONRULE07,
+  NELSONRULE07_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -205,5 +207,57 @@ describe('Nelson Rule 06', () => {
     const input = [10, 10, 10, 20, 20, 20, 20, 10, 10, 10, 10, 10, 10, 10, 10, 10];
     const expectedOutput = [3, 4, 5, 6];
     expect(NELSONRULE06_DESC(input).positions).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 07', () => {
+  test('It can detect one sequence of limited variation', () => {
+    const input = [
+      8,
+      9, 11, 9, 11, 9,
+      11, 9, 11, 9, 11,
+      9, 11, 9, 11, 9,
+      12, 12];
+    const expectedOutput = 1;
+    expect(NELSONRULE07(input)).toEqual(expectedOutput);
+  });
+  test('It can detect two disconnected sequences of limited variation', () => {
+    const input = [
+      8,
+      9, 11, 9, 11, 9,
+      11, 9, 11, 9, 11,
+      9, 11, 9, 11, 9,
+      12, 12];
+    const expectedOutput = 2;
+    expect(NELSONRULE07(input.concat(input))).toEqual(expectedOutput);
+  });
+  test('It can detect three disconnected sequences of limited variation in the correct groupings', () => {
+    const sequence = [
+      8,
+      9, 11, 9, 11, 9,
+      11, 9, 11, 9, 11,
+      9, 11, 9, 11, 9,
+      12, 12];
+    const input = sequence.concat(sequence).concat(sequence);
+    const expectedOutput = [
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33],
+      [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51],
+    ];
+    expect(NELSONRULE07_DESC(input).groups).toEqual(expectedOutput);
+  });
+  test('It can detect three connected sequences of limited variation in the correct groupings', () => {
+    const sequence = [
+      9, 11, 9, 11, 9,
+      11, 9, 11, 9, 11,
+      9, 11, 9, 11, 9,
+    ];
+    const input = [7, 7].concat(sequence).concat(sequence).concat(sequence).concat([12, 12]);
+    const expectedOutput = [
+      [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46],
+    ];
+    expect(NELSONRULE07_DESC(input).groups).toEqual(expectedOutput);
   });
 });

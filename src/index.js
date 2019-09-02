@@ -497,6 +497,70 @@ function NELSONRULE07(arr) {
   return NELSONRULE07_DESC(arr).triggers;
 }
 
+function NELSONRULE08_DESC(arr) {
+  const SEQUENCE_LENGTH = 8;
+  const values = filterOutliers(arr);
+  const mean = meanFn(values);
+  const stdDev = stdDevFn(values);
+  const upper = mean + stdDev;
+  const lower = mean - stdDev;
+
+  const groups = [];
+  let positions = [];
+  let triggers = 0;
+  let counter = 0;
+
+  const isAbove = (val) => (val > upper);
+  const isBelow = (val) => (val < lower);
+  const isOutOfRange = (val) => isAbove(val) || isBelow(val);
+
+  const allOutOfRange = (list) => list.filter(isOutOfRange).length === list.length;
+  const someAbove = (list) => list.filter(isAbove).length < list.length;
+  const someBelow = (list) => list.filter(isBelow).length < list.length;
+
+  function match(list, offset) {
+    if (allOutOfRange(list) && someBelow(list) && someAbove(list)) {
+      return list.map((el, idx) => (offset - list.length) + (idx));
+    }
+    return [];
+  }
+
+  function cycle(val, idx, list) {
+    counter += 1;
+    if (counter >= SEQUENCE_LENGTH) {
+      const matches = match(list.slice(idx - SEQUENCE_LENGTH, idx), idx);
+      if (matches.length > 0) {
+        triggers += 1;
+        groups.push(matches);
+        positions = positions.concat(matches);
+        counter = 0;
+      }
+    }
+  }
+
+  arr.forEach(cycle);
+
+  return {
+    meta: {
+      mean,
+      stdDev,
+      upper,
+      lower,
+    },
+    groups,
+    positions,
+    triggers,
+  };
+}
+
+// Eight points in a row exist, but none within 1 standard deviation of the
+// mean, and the points are in both directions from the mean.
+// Jumping from above to below whilst missing the first standard deviation band
+// is rarely random.
+function NELSONRULE08(arr) {
+  return NELSONRULE08_DESC(arr).triggers;
+}
+
 module.exports = {
   stdDevFn,
   NELSONRULE01,
@@ -510,7 +574,9 @@ module.exports = {
   NELSONRULE05,
   NELSONRULE05_DESC,
   NELSONRULE06,
-  NELSONRULE07_DESC,
-  NELSONRULE07,
   NELSONRULE06_DESC,
+  NELSONRULE07,
+  NELSONRULE07_DESC,
+  NELSONRULE08,
+  NELSONRULE08_DESC,
 };

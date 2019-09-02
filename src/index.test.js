@@ -14,6 +14,8 @@ const {
   NELSONRULE06_DESC,
   NELSONRULE07,
   NELSONRULE07_DESC,
+  NELSONRULE08,
+  NELSONRULE08_DESC,
 } = require('./index');
 
 describe('Standard Deviation Fn', () => {
@@ -259,5 +261,68 @@ describe('Nelson Rule 07', () => {
       [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46],
     ];
     expect(NELSONRULE07_DESC(input).groups).toEqual(expectedOutput);
+  });
+});
+
+describe('Nelson Rule 08', () => {
+  test('It can detect one sequence outside the 1 stddev range', () => {
+    const input = [
+      10, 10,
+      0, 20, 0, 20,
+      0, 20, 0, 20,
+      10, 10,
+    ];
+    const expectedOutput = 1;
+    expect(NELSONRULE08(input)).toEqual(expectedOutput);
+  });
+  test('It can detect one sequence outside the 1 stddev range in the correct grouping', () => {
+    const input = [
+      10, 10,
+      0, 20, 0, 20,
+      0, 20, 0, 20,
+      10, 10,
+    ];
+    const expectedOutput = [
+      [2, 3, 4, 5, 6, 7, 8, 9],
+    ];
+    expect(NELSONRULE08_DESC(input).groups).toEqual(expectedOutput);
+  });
+  test('It can detect three disconnected sequences outside the 1 stddev range in the correct groupings', () => {
+    const padding = [10, 10];
+    const sequence = [
+      0, 20, 0, 20,
+      0, 20, 0, 20,
+    ];
+    const input = padding
+      .concat(sequence)
+      .concat(padding)
+      .concat(sequence)
+      .concat(padding)
+      .concat(sequence)
+      .concat(padding);
+    const expectedOutput = [
+      [2, 3, 4, 5, 6, 7, 8, 9],
+      [12, 13, 14, 15, 16, 17, 18, 19],
+      [22, 23, 24, 25, 26, 27, 28, 29],
+    ];
+    expect(NELSONRULE08_DESC(input).groups).toEqual(expectedOutput);
+  });
+  test('It can detect three connected sequences outside the 1 stddev range in the correct groupings', () => {
+    const padding = [10, 10];
+    const sequence = [
+      0, 20, 0, 20,
+      0, 20, 0, 20,
+    ];
+    const input = padding
+      .concat(sequence)
+      .concat(sequence)
+      .concat(sequence)
+      .concat(padding);
+    const expectedOutput = [
+      [2, 3, 4, 5, 6, 7, 8, 9],
+      [10, 11, 12, 13, 14, 15, 16, 17],
+      [18, 19, 20, 21, 22, 23, 24, 25],
+    ];
+    expect(NELSONRULE08_DESC(input).groups).toEqual(expectedOutput);
   });
 });

@@ -280,16 +280,20 @@ function NELSONRULE04_DESC(listIn) {
   };
 }
 
-// Fourteen (or more) points in a row alternate in direction, increasing then
-// decreasing.
-// This much oscillation is beyond noise.
+/**
+ * Nelson Rule 04
+ * Fourteen (or more) points in a row alternate in direction, increasing then
+ * decreasing.
+ * This much oscillation is beyond noise.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
 function NELSONRULE04(arr) {
   return NELSONRULE04_DESC(arr).triggers;
 }
 
-// Two (or three) out of three points in a row are more than 2 standard
-// deviations from the mean in the same direction.
-// There is a medium tendency for samples to be mediumly out of control.
 function NELSONRULE05_DESC(listIn) {
   const arr = sanitizeInput(listIn);
   const values = filterOutliers(arr);
@@ -363,6 +367,16 @@ function NELSONRULE05_DESC(listIn) {
   };
 }
 
+/**
+ * Nelson Rule 05
+ * Two (or three) out of three points in a row are more than 2 standard
+ * deviations from the mean in the same direction.
+ * There is a medium tendency for samples to be mediumly out of control.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
 function NELSONRULE05(arr) {
   return NELSONRULE05_DESC(arr).triggers;
 }
@@ -442,9 +456,16 @@ function NELSONRULE06_DESC(listIn) {
   };
 }
 
-// Four (or five) out of five points in a row are more than 1 standard
-// deviation from the mean in the same direction.
-// There is a strong tendency for samples to be slightly out of control.
+/**
+ * Nelson Rule 06
+ * Four (or five) out of five points in a row are more than 1 standard
+ * deviation from the mean in the same direction.
+ * There is a strong tendency for samples to be slightly out of control.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
 function NELSONRULE06(arr) {
   return NELSONRULE06_DESC(arr).triggers;
 }
@@ -501,9 +522,16 @@ function NELSONRULE07_DESC(listIn) {
   };
 }
 
-// Fifteen points in a row are all within 1 standard deviation of the mean on
-// either side of the mean.
-// With 1 standard deviation, greater variation would be expected.
+/**
+ * Nelson Rule 07
+ * Fifteen points in a row are all within 1 standard deviation of the mean on
+ * either side of the mean.
+ * With 1 standard deviation, greater variation would be expected.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
 function NELSONRULE07(arr) {
   return NELSONRULE07_DESC(arr).triggers;
 }
@@ -565,12 +593,42 @@ function NELSONRULE08_DESC(listIn) {
   };
 }
 
-// Eight points in a row exist, but none within 1 standard deviation of the
-// mean, and the points are in both directions from the mean.
-// Jumping from above to below whilst missing the first standard deviation band
-// is rarely random.
+/**
+ * Nelson Rule 08
+ * Eight points in a row exist, but none within 1 standard deviation of the
+ * mean, and the points are in both directions from the mean.
+ * Jumping from above to below whilst missing the first standard deviation band
+ * is rarely random.
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
 function NELSONRULE08(arr) {
   return NELSONRULE08_DESC(arr).triggers;
+}
+
+/**
+ * Nelson Rules (All)
+ * Apply all Nelson Rules and return the number of triggers
+ *
+ * @param {Array} arr Array of Numbers
+ * @return Number of triggers
+ * @customfunction
+ */
+function NELSONRULES_ALL(arr) {
+  return [
+    NELSONRULE01,
+    NELSONRULE02,
+    NELSONRULE03,
+    NELSONRULE04,
+    NELSONRULE05,
+    NELSONRULE06,
+    NELSONRULE07,
+    NELSONRULE08,
+  ]
+    .map((rule) => rule(arr))
+    .reduce(((a, b) => a + b), 0);
 }
 
 module.exports = {

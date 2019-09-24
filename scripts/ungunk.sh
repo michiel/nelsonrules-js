@@ -14,7 +14,7 @@ sed -i 's/^  \\\*\*.*$//' $TARGET
 
 # Multi-line cleanup
 
-perl -i -pe 'BEGIN{undef $/;} s/^module.exports = {.*?};//smg' $TARGET
+perl -i -pe 'BEGIN{undef $/;} s/^module.exports = \{.*?\};//smg' $TARGET
 perl -i -pe 'BEGIN{undef $/;} s/var _require.*?;//smg' $TARGET
 
 # Remove empty lines

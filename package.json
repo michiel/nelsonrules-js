@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack",
+    "build:min": "webpack && ./scripts/ungunk.sh && node dist/bundle-clean.js",
     "lint": "eslint -c .eslintrc.js src",
     "lint:fix": "eslint --fix -c .eslintrc.js src"
   },

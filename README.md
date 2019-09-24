@@ -44,3 +44,8 @@ These are taken from Wikipedia
  * Eight points in a row exist, but none within 1 standard deviation of the mean, and the points are in both directions from the mean.
  * Jumping from above to below whilst missing the first standard deviation band is rarely random.
 
+### Nelson Rule 08
+
+ * Eight points in a row exist, but none within 1 standard deviation of the mean, and the points are in both directions from the mean.
+ * Jumping from above to below whilst missing the first standard deviation band is rarely random.
+

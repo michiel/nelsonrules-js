@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "build": "webpack",
-    "lint": "eslint -c .eslintrc.js src"
+    "lint": "eslint -c .eslintrc.js src",
+    "lint:fix": "eslint --fix -c .eslintrc.js src"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-airbnb-base": "^14.0.0",
